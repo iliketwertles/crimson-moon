@@ -11,7 +11,11 @@ the only requirements are dev mode and root access, on flex you have to do some 
 
 -sb     sets boot animation
 
-## Making boot animation
+## Boot animations
+### Existing examples
+there will be pre-made ones here once i make them 
+
+### Making your own
 1. Make folder for the animation files (required)
 2. Put animation files/frames/pictures into the folder
 3. Name the files as `boot_splash_frameXX.png`, XX being the number (starting at 00, then 01 etc, must be 31 frames as of chromeos 109, if older check)
