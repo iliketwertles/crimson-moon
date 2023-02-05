@@ -6,6 +6,13 @@ idk what else to put here but if you break your device its not my fault
 ## Requirements
 the only requirements are dev mode and root access, on flex you have to do some hackery to get dev mode but it is possible
 
+## Making boot animation
+1. Make folder for the animation files (required)
+2. Put animation files/frames/pictures into the folder
+3. Name the files as `boot_splash_frameXX`, XX being the number (starting at 00, then 01 etc, must be 31 frames as of chromeos 109, if older check)
+4. Make text file called `frame-interval` and put the frame interval in there (3 is generally safe but adjust if you dont know)
+5. Run crimson moon with `-sb /path/to/folder`
+
 ## Building
 1. who buildin this? :skull:
 2. its nim, `nim c FILE`
