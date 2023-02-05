@@ -22,5 +22,6 @@ the only requirements are dev mode and root access, on flex you have to do some 
 1. who buildin this? :skull:
 2. its nim, `nim c FILE`
 
-##TODO
+## TODO
 maybe way to magicly get dev mode on chromeos flex?
+grub changes?
