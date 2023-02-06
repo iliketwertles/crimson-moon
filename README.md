@@ -11,6 +11,8 @@ the only requirements are dev mode and root access, on flex you have to do some 
 
 -sb     sets boot animation
 
+-i      the init function, add `sudo crimsonMoon -i` to your ~/.bashrc for it to take effect
+
 ## Boot animations
 ### Existing examples
 there will be pre-made ones here once i make them 
