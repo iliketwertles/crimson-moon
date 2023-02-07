@@ -5,8 +5,67 @@ import strutils
 import strformat
 
 #functions
+proc crimsonPatch(drive: string) =
+    echo "is '" & drive & "' the drive with flex (will have 12 partitions!)"
+    let fs = readLine(stdin)
+    case fs
+    of "y":
+        echo "Patching grub..."
+        if "*" in drive:
+            let bootPart = drive.replace("*", "")
+            createDir("/mnt/crimson")
+            let mount = execShellCmd(fmt("sudo mount {bootPart} /mnt/crimson"))
+            if mount == 32:
+                echo fmt("Mount failed probably, use dd to flash the contents of {bootPart} to a usb drive\nthen specify that usb drive when you re-run this command")
+                removeDir("/mnt/crimson")
+            else:
+                let grubFile = readFile("/mnt/crimson/efi/boot/grub.cfg")
+                let fixedGrub = grubFile.replace("noresume", "noresume cros_debug")
+                removeFile("/mnt/crimson/efi/boot/grub.cfg")
+                writeFile("/mnt/crimson/efi/boot/grub.cfg", fixedGrub)
+                echo "Grub has been patched, now do what you did to get the boot part data onto the usb, but reverse if= and of=\nIt'll output a storage error but don't worry it likely flashed fine"
+
+        elif "nvme" in drive:
+            let bootPart = fmt("{drive}p12")
+            createDir("/mnt/crimson")
+            let mount = execShellCmd(fmt("sudo mount {bootPart} /mnt/crimson"))
+            if mount == 32:
+                echo fmt("Mount failed probably, use dd to flash the contents of {bootPart} to a usb drive\nthen specify that usb drive when you re-run this command")
+                removeDir("/mnt/crimson")
+            else:
+                let grubFile = readFile("/mnt/crimson/efi/boot/grub.cfg")
+                let fixedGrub = grubFile.replace("noresume", "noresume cros_debug")
+                removeFile("/mnt/crimson/efi/boot/grub.cfg")
+                writeFile("/mnt/crimson/efi/boot/grub.cfg", fixedGrub)
+                echo "Grub has been patched, feel free to reboot safely and boot back into ChromeOS"
+
+        elif "sd" in drive:
+            let bootPart = fmt("{drive}12")
+            createDir("/mnt/crimson")
+            let mount = execShellCmd(fmt("sudo mount {bootPart} /mnt/crimson"))
+            if mount == 32:
+                echo fmt("Mount failed probably, use dd to flash the contents of {bootPart} to a usb drive\nthen specify that usb drive when you re-run this command")
+                removeDir("/mnt/crimson")
+            else:
+                let grubFile = readFile("/mnt/crimson/efi/boot/grub.cfg")
+                let fixedGrub = grubFile.replace("noresume", "noresume cros_debug")
+                removeFile("/mnt/crimson/efi/boot/grub.cfg")
+                writeFile("/mnt/crimson/efi/boot/grub.cfg", fixedGrub)
+                echo "Grub has been patched, feel free to reboot safely and boot back into ChromeOS"
+    else:
+        echo "ok then ig..."
+        quit(0)
+
+proc crewInstall() =
+    if fileExists("/usr/local/bin/crew"):
+        echo "ChromeBrew is already installed"
+        quit(0)
+    else:
+        echo "Installing..."
+        discard execShellCmd("curl -Ls git.is/vddgY | bash")
+    
 proc crimsonInit() =
-    #checks if grub was tampered with
+    #checks if grub needs patched
     let grubFile = readFile("/boot/efi/boot/grub.cfg")
     if "cros_debug" in grubFile:
         echo "Grubs fine :)"
@@ -60,28 +119,53 @@ proc bootAnimSet() =
                 copyFileToDir($file, "/usr/share/chromeos-assets/images_200_percent")
 
 #main
-#start checks
 var isRoot = geteuid() == 0
-if not isRoot:
-    echo "run as root bruh"
-    quit(0)
-let help = "this will be a help message later :P"
-#end checks
+let help = """crimsonMoon [OPTION] [DIR] <-- (if aplicable)
+-bb             Backs up boot animation currently set
+-sb             Sets boot animation, requires arg pointing to the folder with the files
+-i              Does init work, sould be put into ~/bashrc for best effect
+--install       Installs given script/program. possible programs: (chromebrew)
+-h              this menu :P"""
 
 case paramCount()
 of 0:
     echo help
 of 1:
     case paramStr(1)
-    of "-bb", "--backupbootanim":
+    of "-bb":
         bootAnimBackup()
-    of "-i", "--init":
+    of "-i":
+        if not isRoot:
+            echo "run as root bruh"
+            quit(0)
         crimsonInit()
+    of "-h", "--help":
+        echo help
     else:
-        echo "idk what that means -->" & paramStr(1)
+        echo "idk what that means --> " & paramStr(1)
 of 2:
     case paramStr(1)
-    of "-sb", "--setbootanim":
+    of "-p":
+        if not isRoot:
+            echo "run as root bruh"
+            quit(0)
+        crimsonPatch(paramStr(2))
+    of "-sb":
+        if not isRoot:
+            echo "run as root bruh"
+            quit(0)
         bootAnimSet()
+    of "--install":
+        if not isRoot:
+            echo "run as root bruh"
+            quit(0)
+        case paramStr(2)
+        of "chromebrew", "crew":
+            crewInstall()
+        else:
+            echo "Not a valid program name"
+    else:
+        echo "idk what that means --> " & paramStr(2)
 else:
-    echo $paramCount() & "is to many args its confusing me ;("
+    echo $paramCount() & " is to many args its confusing me ;("
+    echo help
