@@ -1,7 +1,7 @@
 # Crimson Moon:full_moon:
 ### This project is designed to fix/improve the chromeos flex experience for the more advanced users
-
-idk what else to put here but if you break your device its not my fault
+##
+**I am not responsible for any damage or harm that may occur to your device as a result of following this tutorial. Proceed at your own risk.**
 
 ## Requirements
 ### Patching (enable dev mode)
