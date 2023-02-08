@@ -19,7 +19,7 @@
 * if it tells you to dd partition 12's data onto a usb, do it... e.g:`sudo dd if=/dev/sda12 of=/dev/sdb bs=4M`
 * take into consideration that `sda12` and `sdb` will be replaced by the actual 12th partition and the actual usb
 * **READ THIS FOR THIS ISSUE**
-* when you goto re-run the command, regardless of the usb's numbering or name, but a * after it with no spaces, that tells the program to work stuff a little differently and output different stuff. it will *not* work if you do not do this
+* when you goto re-run the command, regardless of the usb's numbering or name, put a * after it with no spaces, that tells the program to work stuff a little differently and output different stuff. it will *not* work if you do not do this
 * I personally do not know the exact root of this issue nor what devices it will affect, i know for sure the MacBook Air 7,1 is affected if your using the stock ssd
 
 ## Installing
