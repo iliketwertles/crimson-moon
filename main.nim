@@ -73,7 +73,7 @@ proc crimsonInit() =
         let fixedGrub = grubFile.replace("noresume", "noresume cros_debug")
         removeFile("/boot/efi/boot/grub.cfg")
         writeFile("/boot/efi/boot/grub.cfg", fixedGrub)
-        echo "Grub needed to be fixed but its all good now"
+        echo "Grub needed to be patched for some reason but its all good now"
     #checks if any updates happened
     let update = fileExists("/usr/share/chromeos-assets/Crimson-Check.dont.delete")
     if not update:
@@ -105,6 +105,8 @@ proc bootAnimSet() =
         let frameInterval = open(joinPath(paramStr(2), "frame-interval"))
         let configFile = readFile("/etc/init/boot-splash.conf")
         let newConfig = configFile.replace("25", fmt("<{frameInterval.readLine()} * 1000>"))
+        let backupDir = joinPath(getHomeDir(), ".backup") 
+        let currentBackup = joinPath(backupDir, "current-animation")
         removeFile("/etc/init/boot-splash.conf")
         writeFile("/etc/init/boot-splash.conf", newConfig)
         for kind, file in walkDir("/usr/share/chromeos-assets/images_100_percent"):
@@ -116,7 +118,13 @@ proc bootAnimSet() =
         for kind, file in walkDir(paramStr(2)):
             if "boot" in $file:
                 copyFileToDir($file, "/usr/share/chromeos-assets/images_100_percent")
+                echo "Images copyed to 100"
                 copyFileToDir($file, "/usr/share/chromeos-assets/images_200_percent")
+                echo "Images copyed to 200"
+                copyFileToDir($file, currentBackup)
+                echo "Images copyed to backup"
+        echo "Done"
+
 
 #main
 var isRoot = geteuid() == 0
